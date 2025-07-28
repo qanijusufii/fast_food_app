@@ -1,6 +1,5 @@
-import {View, Text, Button, FlatList} from 'react-native'
+import {FlatList, Text, View} from 'react-native'
 import {SafeAreaView} from "react-native-safe-area-context";
-import seed from "@/lib/seed";
 import useAppwrite from "@/lib/useAppwrite";
 import {getCategories, getMenu} from "@/lib/appwrite";
 import {useLocalSearchParams} from "expo-router";
@@ -9,35 +8,35 @@ import CartButton from "@/components/CartButton";
 import cn from "clsx";
 import MenuCard from "@/components/MenuCard";
 import {MenuItem} from "@/type";
-import SearchBar from "@/components/SearchBar";
+
 import Filter from "@/components/Filter";
+import SearchBar from "@/components/SearchBar";
 
 const Search = () => {
     const { category, query } = useLocalSearchParams<{query: string; category: string}>()
 
-    const { data, refetch, loading } = useAppwrite({ fn: getMenu, params: { category, query, limit: 6, }});
-    const {data: categories} = useAppwrite({fn: getCategories});
+    const { data, refetch, loading } = useAppwrite({ fn: getMenu, params: { category,  query,  limit: 6, } });
+    const { data: categories } = useAppwrite({ fn: getCategories });
 
     useEffect(() => {
-        refetch({category,query,limit:6})
+        refetch({ category, query, limit: 6})
     }, [category, query]);
 
-    console.log(data);
-
+    // @ts-ignore
     return (
         <SafeAreaView className="bg-white h-full">
             <FlatList
                 data={data}
-                renderItem={({ item, index}) => {
-                    const isFirstRightColItem = index % 2 == 0;
+                renderItem={({ item, index }) => {
+                    const isFirstRightColItem = index % 2 === 0;
 
                     return (
-                        <View className={cn("flex-1 max-w-[48%]", !isFirstRightColItem ? 'mt-10' : 'mt-0')}>
-                            <MenuCard item={item as MenuItem }/>
+                        <View className={cn("flex-1 max-w-[48%]", !isFirstRightColItem ? 'mt-10': 'mt-0')}>
+                            <MenuCard item={item as MenuItem} />
                         </View>
-                        )
-                    }}
-                keyExtractor={(item) => item.$id}
+                    )
+                }}
+                keyExtractor={item => item.$id}
                 numColumns={2}
                 columnWrapperClassName="gap-7"
                 contentContainerClassName="gap-7 px-5 pb-32"
@@ -55,14 +54,14 @@ const Search = () => {
                         </View>
 
                         <SearchBar />
-                        <Filter categories={categories!} />
 
+                        <Filter categories={categories!} />
                     </View>
                 )}
                 ListEmptyComponent={() => !loading && <Text>No results</Text>}
             />
-
         </SafeAreaView>
     )
 }
+
 export default Search
